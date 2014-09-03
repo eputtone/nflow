@@ -2,7 +2,6 @@ package com.nitorcreations.nflow.engine.internal.dao;
 
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
-import static org.joda.time.DateTime.now;
 import static org.springframework.util.StringUtils.isEmpty;
 
 import java.lang.management.ManagementFactory;
@@ -15,7 +14,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.sql.DataSource;
 
-import org.joda.time.DateTime;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -23,6 +21,7 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
+import org.threeten.bp.ZonedDateTime;
 
 import com.nitorcreations.nflow.engine.internal.storage.db.SQLVariants;
 
@@ -35,7 +34,7 @@ public class ExecutorDao {
   final SQLVariants sqlVariants;
 
   private final int keepaliveIntervalSeconds;
-  private DateTime nextUpdate = now();
+  private ZonedDateTime nextUpdate = ZonedDateTime.now();
 
   final String executorGroup;
   final String executorGroupCondition;
@@ -61,10 +60,10 @@ public class ExecutorDao {
   }
 
   public void tick() {
-    if (nextUpdate.isAfterNow()) {
+    if(nextUpdate.compareTo(ZonedDateTime.now()) > 0) {
       return;
     }
-    nextUpdate = now().plusSeconds(keepaliveIntervalSeconds);
+    nextUpdate = ZonedDateTime.now().plusSeconds(keepaliveIntervalSeconds);
     updateActiveTimestamp();
     recoverWorkflowInstancesFromDeadNodes();
   }
@@ -84,7 +83,7 @@ public class ExecutorDao {
     return executorId;
   }
 
-  public DateTime getMaxWaitUntil() {
+  public ZonedDateTime getMaxWaitUntil() {
     return nextUpdate;
   }
 

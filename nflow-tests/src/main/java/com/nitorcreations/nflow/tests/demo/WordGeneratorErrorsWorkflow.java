@@ -2,9 +2,9 @@ package com.nitorcreations.nflow.tests.demo;
 
 import java.util.Random;
 
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.threeten.bp.ZonedDateTime;
 
 import com.nitorcreations.nflow.engine.workflow.definition.StateExecution;
 import com.nitorcreations.nflow.engine.workflow.definition.WorkflowSettings;
@@ -38,7 +38,7 @@ public class WordGeneratorErrorsWorkflow extends WordGeneratorWorkflow {
       super(null);
     }
     @Override
-    public DateTime getErrorTransitionActivation() {
+    public ZonedDateTime getErrorTransitionActivation() {
       return super.getErrorTransitionActivation();
     }
 

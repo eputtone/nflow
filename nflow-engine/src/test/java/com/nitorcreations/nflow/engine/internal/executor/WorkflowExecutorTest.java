@@ -5,7 +5,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.joda.time.DateTime.now;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
@@ -14,6 +13,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.threeten.bp.ZonedDateTime.now;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -22,7 +22,6 @@ import java.util.Map;
 import org.hamcrest.CoreMatchers;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -31,6 +30,8 @@ import org.mockito.ArgumentMatcher;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.threeten.bp.ZonedDateTime;
+import org.threeten.bp.temporal.ChronoUnit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nitorcreations.nflow.engine.internal.workflow.ObjectStringMapper;
@@ -116,7 +117,7 @@ public class WorkflowExecutorTest extends BaseNflowTest {
     when(workflowInstances.getWorkflowInstance(eq(instance.id))).thenReturn(instance);
     executor.run();
     verify(workflowInstances).updateWorkflowInstance(argThat(matchesWorkflowInstance(FailingTestWorkflow.State.error, 0, false,
-        is(nullValue(DateTime.class)))), argThat(matchesWorkflowInstanceAction(FailingTestWorkflow.State.failure, 0)));
+        is(nullValue(ZonedDateTime.class)))), argThat(matchesWorkflowInstanceAction(FailingTestWorkflow.State.failure, 0)));
   }
 
   @Test
@@ -129,7 +130,7 @@ public class WorkflowExecutorTest extends BaseNflowTest {
     when(workflowInstances.getWorkflowInstance(eq(instance.id))).thenReturn(instance);
     executor.run();
     verify(workflowInstances).updateWorkflowInstance(argThat(matchesWorkflowInstance(FailingTestWorkflow.State.error, 0, false,
-        is(nullValue(DateTime.class)))), argThat(matchesWorkflowInstanceAction(FailingTestWorkflow.State.processNoNextState, 0)));
+        is(nullValue(ZonedDateTime.class)))), argThat(matchesWorkflowInstanceAction(FailingTestWorkflow.State.processNoNextState, 0)));
   }
 
   @SuppressWarnings("serial")
@@ -166,11 +167,11 @@ public class WorkflowExecutorTest extends BaseNflowTest {
 
   private ArgumentMatcher<WorkflowInstance> matchesWorkflowInstance(final WorkflowState state,
       final int retries, final boolean isProcessing) {
-    return matchesWorkflowInstance(state, retries, isProcessing, CoreMatchers.any(DateTime.class));
+    return matchesWorkflowInstance(state, retries, isProcessing, CoreMatchers.any(ZonedDateTime.class));
   }
 
   private ArgumentMatcher<WorkflowInstance> matchesWorkflowInstance(final WorkflowState state,
-      final int retries, final boolean isProcessing, final Matcher<DateTime> nextActivationMatcher) {
+      final int retries, final boolean isProcessing, final Matcher<ZonedDateTime> nextActivationMatcher) {
     return new ArgumentMatcher<WorkflowInstance>() {
       @Override
       public boolean matches(Object argument) {
@@ -266,7 +267,7 @@ public class WorkflowExecutorTest extends BaseNflowTest {
     when(workflowDefinitions.getWorkflowDefinition(eq("test"))).thenReturn(null);
     executor.run();
     verify(workflowInstances).updateWorkflowInstance(argThat(matchesWorkflowInstance(FailingTestWorkflow.State.start, 0, true,
-        is(nullValue(DateTime.class)))), argThat(is(nullValue(WorkflowInstanceAction.class))));
+        is(nullValue(ZonedDateTime.class)))), argThat(is(nullValue(WorkflowInstanceAction.class))));
   }
 
   public static class Pojo {
@@ -313,13 +314,13 @@ public class WorkflowExecutorTest extends BaseNflowTest {
 
     public void start(StateExecution execution) {
       execution.setNextState(State.process);
-      execution.setNextActivation(now().plusMillis(
-          getSettings().getErrorTransitionDelay()));
+      execution.setNextActivation(ZonedDateTime.now().plus(
+          getSettings().getErrorTransitionDelay(), ChronoUnit.MILLIS));
     }
 
     public void process(StateExecution execution, @StateVar("string") String s, @StateVar("int") int i, @StateVar("pojo") Pojo pojo, @StateVar(value="nullPojo", instantiateNull=true) Pojo pojo2, @StateVar(value="immutablePojo", readOnly=true) Pojo unmodifiablePojo, @StateVar("nullInt") int zero, @StateVar("mutableString") Mutable<String> mutableString) {
       execution.setNextState(State.done);
-      execution.setNextActivation(DateTime.now());
+      execution.setNextActivation(ZonedDateTime.now());
       Pojo pojo1 = execution.getVariable("pojo", Pojo.class);
       assertThat(pojo.field, is(pojo1.field));
       assertThat(pojo.test, is(pojo1.test));

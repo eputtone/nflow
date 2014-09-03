@@ -3,9 +3,9 @@ package com.nitorcreations.nflow.tests;
 import static java.util.Arrays.asList;
 import static org.apache.cxf.jaxrs.client.WebClient.fromClient;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.joda.time.DateTime.now;
 import static org.junit.Assert.assertThat;
 import static org.junit.runners.MethodSorters.NAME_ASCENDING;
+import static org.threeten.bp.ZonedDateTime.now;
 
 import java.math.BigDecimal;
 import java.util.UUID;

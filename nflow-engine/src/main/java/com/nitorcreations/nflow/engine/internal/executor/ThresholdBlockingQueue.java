@@ -1,7 +1,5 @@
 package com.nitorcreations.nflow.engine.internal.executor;
 
-import static org.joda.time.DateTimeUtils.currentTimeMillis;
-
 import java.util.AbstractQueue;
 import java.util.Collection;
 import java.util.Iterator;
@@ -9,7 +7,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import org.joda.time.DateTime;
+import org.threeten.bp.ZonedDateTime;
 
 public class ThresholdBlockingQueue<E> extends AbstractQueue<E> implements BlockingQueue<E> {
   private final LinkedBlockingQueue<E> queue;
@@ -29,9 +27,9 @@ public class ThresholdBlockingQueue<E> extends AbstractQueue<E> implements Block
     }
   }
 
-  public synchronized void waitUntilQueueSizeLowerThanThreshold(DateTime waitUntil) throws InterruptedException {
+  public synchronized void waitUntilQueueSizeLowerThanThreshold(ZonedDateTime waitUntil) throws InterruptedException {
     while (queue.size() > notifyThreshHold) {
-      long sleep = waitUntil.getMillis() - currentTimeMillis();
+      long sleep = waitUntil.toInstant().toEpochMilli() - ZonedDateTime.now().toInstant().toEpochMilli();
       if (sleep <= 0) {
         break;
       }

@@ -5,8 +5,8 @@ import static com.nitorcreations.nflow.engine.workflow.definition.WorkflowStateT
 import static com.nitorcreations.nflow.engine.workflow.definition.WorkflowStateType.normal;
 import static org.slf4j.LoggerFactory.getLogger;
 
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
+import org.threeten.bp.ZonedDateTime;
 
 import com.nitorcreations.nflow.engine.workflow.definition.StateExecution;
 import com.nitorcreations.nflow.engine.workflow.definition.WorkflowDefinition;
@@ -50,12 +50,12 @@ public class DemoWorkflow extends WorkflowDefinition<DemoWorkflow.State> {
 
   public void start(StateExecution execution) {
     execution.setNextState(State.process);
-    execution.setNextActivation(DateTime.now());
+    execution.setNextActivation(ZonedDateTime.now());
   }
 
   public void process(StateExecution execution) {
     execution.setNextState(State.done);
-    execution.setNextActivation(DateTime.now());
+    execution.setNextActivation(ZonedDateTime.now());
   }
 
   public void done(StateExecution execution) {

@@ -21,7 +21,6 @@ import javax.inject.Named;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang3.mutable.MutableInt;
-import org.joda.time.DateTime;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -34,6 +33,9 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.threeten.bp.DateTimeUtils;
+import org.threeten.bp.ZoneId;
+import org.threeten.bp.ZonedDateTime;
 
 import com.nitorcreations.nflow.engine.workflow.instance.QueryWorkflowInstances;
 import com.nitorcreations.nflow.engine.workflow.instance.WorkflowInstance;
@@ -345,16 +347,17 @@ public class WorkflowInstanceDao {
     return rs.wasNull() ? null : Long.valueOf(tmp);
   }
 
-  static Timestamp toTimestampOrNow(DateTime time) {
-    return time == null ? new Timestamp(currentTimeMillis()) : new Timestamp(time.getMillis());
+  static Timestamp toTimestampOrNow(ZonedDateTime time) {
+    return time == null ? new Timestamp(currentTimeMillis()) : new Timestamp(time.toInstant().toEpochMilli());
   }
 
-  static Timestamp toTimestamp(DateTime time) {
-    return time == null ? null : new Timestamp(time.getMillis());
+  static Timestamp toTimestamp(ZonedDateTime time) {
+    return time == null ? null : new Timestamp(time.toInstant().toEpochMilli());
   }
 
-  static DateTime toDateTime(Timestamp time) {
-    return time == null ? null : new DateTime(time.getTime());
+  static ZonedDateTime toDateTime(Timestamp time) {
+    ZoneId zone = ZonedDateTime.now().getZone();
+    return time == null ? null : ZonedDateTime.ofInstant(DateTimeUtils.toInstant(time), zone);
   }
 
   static String limitLength(String s, int maxLen) {

@@ -3,8 +3,8 @@ package com.nitorcreations.nflow.rest.v1.converter;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
+import org.threeten.bp.ZonedDateTime;
 
 import com.nitorcreations.nflow.engine.workflow.instance.WorkflowInstance;
 import com.nitorcreations.nflow.engine.workflow.instance.WorkflowInstanceFactory;
@@ -24,7 +24,7 @@ public class CreateWorkflowConverter {
     WorkflowInstance.Builder builder = factory.newWorkflowInstanceBuilder().setType(req.type)
         .setBusinessKey(req.businessKey).setExternalId(req.externalId);
     if (req.activationTime == null) {
-      builder.setNextActivation(DateTime.now());
+      builder.setNextActivation(ZonedDateTime.now());
     } else {
       builder.setNextActivation(req.activationTime);
     }

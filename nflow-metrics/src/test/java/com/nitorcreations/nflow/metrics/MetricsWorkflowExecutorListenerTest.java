@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -14,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.mock.env.MockEnvironment;
+import org.threeten.bp.ZonedDateTime;
 
 import com.codahale.metrics.MetricRegistry;
 import com.nitorcreations.nflow.engine.listener.WorkflowExecutorListener;
@@ -31,7 +31,7 @@ public class MetricsWorkflowExecutorListenerTest {
   WorkflowDefinition<?> definition = mock(WorkflowDefinition.class);
   WorkflowInstance instance = new WorkflowInstance.Builder().setRetries(2).setState("my-state").build();
   WorkflowInstance instance2 = new WorkflowInstance.Builder().setRetries(2).setState("my-state")
-      .setNextActivation(DateTime.now()).build();
+      .setNextActivation(ZonedDateTime.now()).build();
   StateExecution stateExecution = mock(StateExecution.class);
   ListenerContext context = new WorkflowExecutorListener.ListenerContext(
       definition, instance, stateExecution);

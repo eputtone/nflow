@@ -1,11 +1,11 @@
 package com.nitorcreations.nflow.engine.listener;
 
-import static org.joda.time.DateTime.now;
+import static org.threeten.bp.ZonedDateTime.now;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.joda.time.DateTime;
+import org.threeten.bp.ZonedDateTime;
 
 import com.nitorcreations.nflow.engine.workflow.definition.StateExecution;
 import com.nitorcreations.nflow.engine.workflow.definition.WorkflowDefinition;
@@ -29,7 +29,7 @@ public interface WorkflowExecutorListener {
    */
   @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD", justification = "listeners are implemented by business applications")
   public class ListenerContext {
-    public final DateTime start = now();
+    public final ZonedDateTime start = now();
     public final WorkflowDefinition<?> definition;
     public final String originalState;
     public final WorkflowInstance instance;

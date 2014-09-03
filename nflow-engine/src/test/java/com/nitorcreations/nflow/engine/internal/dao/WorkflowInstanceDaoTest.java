@@ -18,10 +18,11 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
+import org.threeten.bp.ZonedDateTime;
+import org.threeten.bp.temporal.ChronoUnit;
 
 import com.nitorcreations.nflow.engine.workflow.instance.QueryWorkflowInstances;
 import com.nitorcreations.nflow.engine.workflow.instance.WorkflowInstance;
@@ -75,10 +76,10 @@ public class WorkflowInstanceDaoTest extends BaseDaoTest {
     final WorkflowInstance i2 = new WorkflowInstance.Builder(dao.getWorkflowInstance(id))
       .setState("updateState")
       .setStateText("update text")
-      .setNextActivation(DateTime.now())
+      .setNextActivation(ZonedDateTime.now())
       .setProcessing(!i1.processing)
       .build();
-    final DateTime originalModifiedTime = dao.getWorkflowInstance(id).modified;
+    final ZonedDateTime originalModifiedTime = dao.getWorkflowInstance(id).modified;
     sleep(1);
     dao.updateWorkflowInstance(i2);
     JdbcTemplate template = new JdbcTemplate(ds);
@@ -87,9 +88,9 @@ public class WorkflowInstanceDaoTest extends BaseDaoTest {
       public void processRow(ResultSet rs) throws SQLException {
         assertThat(rs.getString("state"), equalTo(i2.state));
         assertThat(rs.getString("state_text"), equalTo(i2.stateText));
-        assertThat(rs.getTimestamp("next_activation").getTime(), equalTo(i2.nextActivation.toDate().getTime()));
+        assertThat(rs.getTimestamp("next_activation").getTime(), equalTo(i2.nextActivation.toInstant().toEpochMilli()));
         assertThat(rs.getInt("executor_id") != 0, equalTo(i2.processing));
-        assertThat(rs.getTimestamp("modified").getTime(), greaterThan(originalModifiedTime.getMillis()));
+        assertThat(rs.getTimestamp("modified").getTime(), greaterThan(originalModifiedTime.toInstant().toEpochMilli()));
       }
     });
   }
@@ -99,8 +100,8 @@ public class WorkflowInstanceDaoTest extends BaseDaoTest {
     WorkflowInstance i1 = constructWorkflowInstanceBuilder().build();
     i1.stateVariables.put("a", "1");
     int id = dao.insertWorkflowInstance(i1);
-    WorkflowInstanceAction a1 = new WorkflowInstanceAction.Builder().setExecutionStart(DateTime.now()).
-        setExecutionEnd(DateTime.now().plusMillis(100)).setRetryNo(1).setState("test").setStateText("state text").
+    WorkflowInstanceAction a1 = new WorkflowInstanceAction.Builder().setExecutionStart(ZonedDateTime.now()).
+        setExecutionEnd(ZonedDateTime.now().plus(100, ChronoUnit.MILLIS)).setRetryNo(1).setState("test").setStateText("state text").
         setWorkflowId(id).build();
     i1.stateVariables.put("b", "2");
     dao.insertWorkflowInstanceAction(i1, a1);
@@ -109,7 +110,7 @@ public class WorkflowInstanceDaoTest extends BaseDaoTest {
 
   @Test
   public void pollNextWorkflowInstances() {
-    WorkflowInstance i1 = constructWorkflowInstanceBuilder().setNextActivation(DateTime.now().minusMinutes(1)).setOwner("junit").build();
+    WorkflowInstance i1 = constructWorkflowInstanceBuilder().setNextActivation(ZonedDateTime.now().minusMinutes(1)).setOwner("junit").build();
     int id = dao.insertWorkflowInstance(i1);
     List<Integer> firstBatch = dao.pollNextWorkflowInstanceIds(100);
     List<Integer> secondBatch = dao.pollNextWorkflowInstanceIds(100);
@@ -122,7 +123,7 @@ public class WorkflowInstanceDaoTest extends BaseDaoTest {
   public void pollNextWorkflowInstancesWithRaceCondition() throws InterruptedException {
     int batchSize = 100;
     for (int i=0; i<batchSize; i++) {
-      WorkflowInstance instance = constructWorkflowInstanceBuilder().setNextActivation(DateTime.now().minusMinutes(1)).setOwner("junit").build();
+      WorkflowInstance instance = constructWorkflowInstanceBuilder().setNextActivation(ZonedDateTime.now().minusMinutes(1)).setOwner("junit").build();
       dao.insertWorkflowInstance(instance);
     }
     Poller[] pollers = new Poller[] { new Poller(dao, batchSize), new Poller(dao, batchSize) };

@@ -3,7 +3,7 @@ package com.nitorcreations.nflow.rest.v1.msg;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.joda.time.DateTime;
+import org.threeten.bp.ZonedDateTime;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.wordnik.swagger.annotations.ApiModel;
@@ -38,6 +38,6 @@ public class CreateWorkflowInstanceRequest {
   public JsonNode requestData;
 
   @ApiModelProperty(value = "Start time for workflow execution, if missing 'now'", required=false)
-  public DateTime activationTime;
+  public ZonedDateTime activationTime;
 
 }

@@ -6,18 +6,17 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.threeten.bp.ZonedDateTime;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.nitorcreations.nflow.engine.internal.workflow.ObjectStringMapper;
 import com.nitorcreations.nflow.engine.workflow.instance.WorkflowInstance;
 import com.nitorcreations.nflow.engine.workflow.instance.WorkflowInstanceFactory;
-import com.nitorcreations.nflow.rest.v1.converter.CreateWorkflowConverter;
 import com.nitorcreations.nflow.rest.v1.msg.CreateWorkflowInstanceRequest;
 import com.nitorcreations.nflow.rest.v1.msg.CreateWorkflowInstanceResponse;
 
@@ -37,7 +36,7 @@ public class CreateWorkflowConverterTest {
   @Test
   public void convertAndValidateWorks() {
     CreateWorkflowInstanceRequest req = new CreateWorkflowInstanceRequest();
-    req.activationTime = DateTime.now();
+    req.activationTime = ZonedDateTime.now();
     req.businessKey = "businessKey";
     req.externalId = "externalId";
     req.requestData = mock(JsonNode.class);
@@ -56,7 +55,7 @@ public class CreateWorkflowConverterTest {
     CreateWorkflowInstanceRequest req = new CreateWorkflowInstanceRequest();
     req.type = "wfType";
     WorkflowInstance i = converter.convertAndValidate(req);
-    assertThat(i.nextActivation, notNullValue(DateTime.class));
+    assertThat(i.nextActivation, notNullValue(ZonedDateTime.class));
     assertThat(i.businessKey, nullValue(String.class));
     assertThat(i.externalId, nullValue(String.class));
     assertThat(i.type, equalTo(req.type));

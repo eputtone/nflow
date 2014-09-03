@@ -4,8 +4,8 @@ import static com.nitorcreations.Matchers.reflectEquals;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.joda.time.DateTime.now;
 import static org.junit.Assert.assertThat;
+import static org.threeten.bp.ZonedDateTime.now;
 
 import java.util.Arrays;
 
@@ -17,7 +17,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import com.nitorcreations.nflow.engine.workflow.instance.QueryWorkflowInstances;
 import com.nitorcreations.nflow.engine.workflow.instance.WorkflowInstance;
 import com.nitorcreations.nflow.engine.workflow.instance.WorkflowInstanceAction;
-import com.nitorcreations.nflow.rest.v1.converter.ListWorkflowInstanceConverter;
 import com.nitorcreations.nflow.rest.v1.msg.Action;
 import com.nitorcreations.nflow.rest.v1.msg.ListWorkflowInstanceResponse;
 

@@ -16,10 +16,10 @@ import static org.mockito.Mockito.when;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.joda.time.DateTime;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.threeten.bp.ZonedDateTime;
 
 import com.nitorcreations.nflow.engine.internal.workflow.StateExecutionImpl;
 import com.nitorcreations.nflow.engine.workflow.definition.WorkflowDefinitionTest.TestDefinition.TestState;
@@ -55,13 +55,13 @@ public class WorkflowDefinitionTest {
   @Test
   public void handleRetryMaxRetriesExceededHaveFailureState() {
     StateExecutionImpl execution = handleRetryMaxRetriesExceeded(TestState.start);
-    verify(execution).setNextState(eq(TestState.error.name()), any(String.class), any(DateTime.class));
+    verify(execution).setNextState(eq(TestState.error.name()), any(String.class), any(ZonedDateTime.class));
   }
 
   @Test
   public void handleRetryMaxRetriesExceededNotHaveFailureState() {
     StateExecutionImpl execution = handleRetryMaxRetriesExceeded(TestState.notfound);
-    verify(execution).setNextState(eq(TestState.notfound), any(String.class), isNull(DateTime.class));
+    verify(execution).setNextState(eq(TestState.notfound), any(String.class), isNull(ZonedDateTime.class));
   }
 
   private StateExecutionImpl handleRetryMaxRetriesExceeded(TestState currentState) {

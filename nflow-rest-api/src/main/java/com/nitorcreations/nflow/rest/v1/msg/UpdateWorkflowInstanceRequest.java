@@ -1,6 +1,6 @@
 package com.nitorcreations.nflow.rest.v1.msg;
 
-import org.joda.time.DateTime;
+import org.threeten.bp.ZonedDateTime;
 
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -15,6 +15,6 @@ public class UpdateWorkflowInstanceRequest {
   public String state;
 
   @ApiModelProperty(value = "New next activation time for next workflow instance processing", required=false)
-  public DateTime nextActivationTime;
+  public ZonedDateTime nextActivationTime;
 
 }

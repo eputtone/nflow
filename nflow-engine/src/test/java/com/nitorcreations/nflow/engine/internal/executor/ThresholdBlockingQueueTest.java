@@ -6,13 +6,13 @@ import static java.util.concurrent.Executors.newSingleThreadExecutor;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.threeten.bp.ZonedDateTime.now;
 
 import java.util.ArrayList;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import org.joda.time.DateTime;
 import org.junit.Test;
 
 public class ThresholdBlockingQueueTest {
@@ -48,7 +48,7 @@ public class ThresholdBlockingQueueTest {
 
   @Test(timeout = 5000)
   public void doesNotWaitIfQueueIsAlreadyBelowThreshold() throws InterruptedException {
-    q.waitUntilQueueSizeLowerThanThreshold(new DateTime().plusMinutes(1));
+    q.waitUntilQueueSizeLowerThanThreshold(now().plusMinutes(1));
   }
 
   @Test(timeout = 10000)
@@ -59,7 +59,7 @@ public class ThresholdBlockingQueueTest {
     Callable<Integer> tester = new Callable<Integer>() {
       @Override
       public Integer call() throws Exception {
-        q.waitUntilQueueSizeLowerThanThreshold(new DateTime().plusMinutes(1));
+        q.waitUntilQueueSizeLowerThanThreshold(now().plusMinutes(1));
         return q.size();
       }
     };
@@ -86,7 +86,7 @@ public class ThresholdBlockingQueueTest {
     Callable<Integer> tester = new Callable<Integer>() {
       @Override
       public Integer call() throws Exception {
-        q.waitUntilQueueSizeLowerThanThreshold(new DateTime().plusSeconds(3));
+        q.waitUntilQueueSizeLowerThanThreshold(now().plusSeconds(3));
         return q.size();
       }
     };

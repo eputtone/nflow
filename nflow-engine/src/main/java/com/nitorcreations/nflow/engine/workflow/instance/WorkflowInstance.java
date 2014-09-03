@@ -4,7 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.joda.time.DateTime;
+import org.threeten.bp.ZonedDateTime;
 
 import com.nitorcreations.nflow.engine.internal.workflow.ObjectStringMapper;
 
@@ -16,14 +16,14 @@ public class WorkflowInstance {
   public final String externalId;
   public final String state;
   public final String stateText;
-  public final DateTime nextActivation;
+  public final ZonedDateTime nextActivation;
   public final boolean processing;
   public final Map<String, String> stateVariables;
   public final Map<String, String> originalStateVariables;
   public final List<WorkflowInstanceAction> actions;
   public final int retries;
-  public final DateTime created;
-  public final DateTime modified;
+  public final ZonedDateTime created;
+  public final ZonedDateTime modified;
   public final String owner;
 
   WorkflowInstance(Builder builder) {
@@ -52,14 +52,14 @@ public class WorkflowInstance {
     String externalId;
     String state;
     String stateText;
-    DateTime nextActivation;
+    ZonedDateTime nextActivation;
     boolean processing;
     final Map<String, String> originalStateVariables = new LinkedHashMap<>();
     final Map<String, String> stateVariables = new LinkedHashMap<>();
     List<WorkflowInstanceAction> actions;
     int retries;
-    DateTime created;
-    DateTime modified;
+    ZonedDateTime created;
+    ZonedDateTime modified;
     String owner;
 
     private ObjectStringMapper mapper;
@@ -118,7 +118,7 @@ public class WorkflowInstance {
       return this;
    }
 
-    public Builder setNextActivation(DateTime nextActivation) {
+    public Builder setNextActivation(ZonedDateTime nextActivation) {
       this.nextActivation = nextActivation;
       return this;
     }
@@ -163,12 +163,12 @@ public class WorkflowInstance {
       return this;
     }
 
-    public Builder setCreated(DateTime created) {
+    public Builder setCreated(ZonedDateTime created) {
       this.created = created;
       return this;
     }
 
-    public Builder setModified(DateTime modified) {
+    public Builder setModified(ZonedDateTime modified) {
       this.modified = modified;
       return this;
     }

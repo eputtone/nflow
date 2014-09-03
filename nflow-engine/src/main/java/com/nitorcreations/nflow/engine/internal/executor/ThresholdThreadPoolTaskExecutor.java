@@ -2,8 +2,8 @@ package com.nitorcreations.nflow.engine.internal.executor;
 
 import java.util.concurrent.BlockingQueue;
 
-import org.joda.time.DateTime;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.threeten.bp.ZonedDateTime;
 
 public class ThresholdThreadPoolTaskExecutor extends ThreadPoolTaskExecutor {
   private static final long serialVersionUID = 1L;
@@ -13,7 +13,7 @@ public class ThresholdThreadPoolTaskExecutor extends ThreadPoolTaskExecutor {
     this.threshold = threshold;
   }
 
-  public void waitUntilQueueSizeLowerThanThreshold(DateTime waitUntil) throws InterruptedException {
+  public void waitUntilQueueSizeLowerThanThreshold(ZonedDateTime waitUntil) throws InterruptedException {
     ((ThresholdBlockingQueue<?>) getThreadPoolExecutor().getQueue()).waitUntilQueueSizeLowerThanThreshold(waitUntil);
   }
 

@@ -1,8 +1,8 @@
 package com.nitorcreations.nflow.engine.workflow.instance;
 
-import static org.joda.time.DateTime.now;
+import static org.threeten.bp.ZonedDateTime.now;
 
-import org.joda.time.DateTime;
+import org.threeten.bp.ZonedDateTime;
 
 public class WorkflowInstanceAction {
 
@@ -10,8 +10,8 @@ public class WorkflowInstanceAction {
   public final String state;
   public final String stateText;
   public final int retryNo;
-  public final DateTime executionStart;
-  public final DateTime executionEnd;
+  public final ZonedDateTime executionStart;
+  public final ZonedDateTime executionEnd;
 
   public WorkflowInstanceAction(Builder builder) {
     this.workflowId = builder.workflowId;
@@ -28,8 +28,8 @@ public class WorkflowInstanceAction {
     String state;
     String stateText;
     int retryNo;
-    DateTime executionStart;
-    DateTime executionEnd;
+    ZonedDateTime executionStart;
+    ZonedDateTime executionEnd;
 
     public Builder() {
     }
@@ -61,12 +61,12 @@ public class WorkflowInstanceAction {
       return this;
     }
 
-    public Builder setExecutionStart(DateTime executionStart) {
+    public Builder setExecutionStart(ZonedDateTime executionStart) {
       this.executionStart = executionStart;
       return this;
     }
 
-    public Builder setExecutionEnd(DateTime executionEnd) {
+    public Builder setExecutionEnd(ZonedDateTime executionEnd) {
       this.executionEnd = executionEnd;
       return this;
     }

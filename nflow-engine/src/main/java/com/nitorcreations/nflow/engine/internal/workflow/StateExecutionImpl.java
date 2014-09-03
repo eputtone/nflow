@@ -1,6 +1,6 @@
 package com.nitorcreations.nflow.engine.internal.workflow;
 
-import org.joda.time.DateTime;
+import org.threeten.bp.ZonedDateTime;
 
 import com.nitorcreations.nflow.engine.workflow.definition.StateExecution;
 import com.nitorcreations.nflow.engine.workflow.definition.WorkflowState;
@@ -10,7 +10,7 @@ public class StateExecutionImpl implements StateExecution {
 
   private final WorkflowInstance instance;
   private final ObjectStringMapper objectMapper;
-  private DateTime nextActivation;
+  private ZonedDateTime nextActivation;
   private String nextState;
   private String nextStateReason;
   private boolean failure = false;
@@ -21,7 +21,7 @@ public class StateExecutionImpl implements StateExecution {
     this.objectMapper = objectMapper;
   }
 
-  public DateTime getNextActivation() {
+  public ZonedDateTime getNextActivation() {
     return this.nextActivation;
   }
 
@@ -29,7 +29,7 @@ public class StateExecutionImpl implements StateExecution {
     return this.nextState;
   }
 
-  public void setNextState(String state, String reason, DateTime activation) {
+  public void setNextState(String state, String reason, ZonedDateTime activation) {
     this.nextState = state;
     this.nextStateReason = reason;
     this.nextActivation = activation;
@@ -87,7 +87,7 @@ public class StateExecutionImpl implements StateExecution {
   }
 
   @Override
-  public void setNextActivation(DateTime activation) {
+  public void setNextActivation(ZonedDateTime activation) {
     this.nextActivation = activation;
   }
 
@@ -102,7 +102,7 @@ public class StateExecutionImpl implements StateExecution {
   }
 
   @Override
-  public void setNextState(WorkflowState state, String reason, DateTime activation) {
+  public void setNextState(WorkflowState state, String reason, ZonedDateTime activation) {
     setNextState(state != null ? state.name() : null, reason, activation);
   }
 

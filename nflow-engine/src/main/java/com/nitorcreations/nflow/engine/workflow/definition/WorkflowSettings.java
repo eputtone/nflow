@@ -9,6 +9,8 @@ import javax.inject.Inject;
 import org.joda.time.DateTime;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import org.threeten.bp.ZonedDateTime;
+import org.threeten.bp.temporal.ChronoUnit;
 
 @Component
 public class WorkflowSettings {
@@ -29,8 +31,8 @@ public class WorkflowSettings {
     maxRetries = getIntegerProperty("nflow.max.state.retries", 3);
   }
 
-  public DateTime getErrorTransitionActivation() {
-    return now().plusMillis(getErrorTransitionDelay());
+  public ZonedDateTime getErrorTransitionActivation() {
+    return ZonedDateTime.now().plus(getErrorTransitionDelay(), ChronoUnit.MILLIS);
   }
 
   public int getErrorTransitionDelay() {

@@ -1,6 +1,6 @@
 package com.nitorcreations.nflow.engine.workflow.definition;
 
-import org.joda.time.DateTime;
+import org.threeten.bp.ZonedDateTime;
 
 public interface StateExecution {
 
@@ -15,10 +15,10 @@ public interface StateExecution {
   void setVariable(String name, String value);
   void setVariable(String name, Object value);
 
-  void setNextActivation(DateTime time);
+  void setNextActivation(ZonedDateTime time);
   void setNextState(WorkflowState state);
   void setNextStateReason(String stateText);
-  void setNextState(WorkflowState state, String stateText, DateTime time);
+  void setNextState(WorkflowState state, String stateText, ZonedDateTime time);
   void setFailure(boolean failure);
   void setSaveTrace(boolean saveTrace);
 

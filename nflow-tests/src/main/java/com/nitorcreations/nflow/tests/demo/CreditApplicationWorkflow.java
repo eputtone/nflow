@@ -10,8 +10,8 @@ import static com.nitorcreations.nflow.tests.demo.CreditApplicationWorkflow.Stat
 import static com.nitorcreations.nflow.tests.demo.CreditApplicationWorkflow.State.error;
 import static com.nitorcreations.nflow.tests.demo.CreditApplicationWorkflow.State.finishCreditApplication;
 import static com.nitorcreations.nflow.tests.demo.CreditApplicationWorkflow.State.grantLoan;
-import static org.joda.time.DateTime.now;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.threeten.bp.ZonedDateTime.now;
 
 import java.math.BigDecimal;
 

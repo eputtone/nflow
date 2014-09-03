@@ -1,12 +1,14 @@
 package com.nitorcreations.nflow.engine.internal.executor;
 
-import static org.joda.time.DateTime.now;
 import static org.slf4j.LoggerFactory.getLogger;
+import static org.threeten.bp.ZonedDateTime.now;
 
-import org.joda.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.MDC;
 import org.springframework.util.ReflectionUtils;
+import org.threeten.bp.Duration;
+import org.threeten.bp.ZonedDateTime;
+import org.threeten.bp.temporal.ChronoUnit;
 
 import com.nitorcreations.nflow.engine.internal.workflow.ObjectStringMapper;
 import com.nitorcreations.nflow.engine.internal.workflow.StateExecutionImpl;
@@ -58,9 +60,10 @@ class WorkflowExecutor implements Runnable {
   private void runImpl() {
     logger.debug("Starting.");
     WorkflowInstance instance = workflowInstances.getWorkflowInstance(instanceId);
-    Duration executionLag = new Duration(instance.nextActivation, null);
-    if (executionLag.isLongerThan(Duration.standardMinutes(1))) {
-      logger.warn("Execution lagging {} seconds.", executionLag.getStandardSeconds());
+    Duration executionLag = Duration.between(instance.nextActivation, ZonedDateTime.now());
+
+    if (executionLag.compareTo(Duration.ofMinutes(1)) > 0) {
+      logger.warn("Execution lagging {} seconds.", executionLag.getSeconds());
     }
     WorkflowDefinition<? extends WorkflowState> definition = workflowDefinitions.getWorkflowDefinition(instance.type);
     if (definition == null) {
@@ -105,7 +108,7 @@ class WorkflowExecutor implements Runnable {
       int subsequentStateExecutions, StateExecutionImpl execution) {
     if (subsequentStateExecutions++ >= MAX_SUBSEQUENT_STATE_EXECUTIONS && execution.getNextActivation() != null) {
       logger.warn("Executed {} times without delay, forcing short transition delay", MAX_SUBSEQUENT_STATE_EXECUTIONS);
-      execution.setNextActivation(execution.getNextActivation().plusMillis(settings.getShortTransitionDelay()));
+      execution.setNextActivation(execution.getNextActivation().plus(settings.getShortTransitionDelay(), ChronoUnit.MILLIS));
     }
     return subsequentStateExecutions;
   }
@@ -113,7 +116,7 @@ class WorkflowExecutor implements Runnable {
   private WorkflowInstance saveWorkflowInstanceState(StateExecutionImpl execution, WorkflowInstance instance,
       WorkflowDefinition<?> definition, WorkflowInstanceAction.Builder actionBuilder) {
     if (execution.getNextState() == null) {
-      execution.setNextState(definition.getErrorState(), "No next state defined by state " + execution.getCurrentStateName(), now());
+      execution.setNextState(definition.getErrorState(), "No next state defined by state " + execution.getCurrentStateName(), ZonedDateTime.now());
       execution.setNextActivation(null);
     }
     if (definition.getMethod(execution.getNextState()) == null && execution.getNextActivation() != null)  {
@@ -135,7 +138,7 @@ class WorkflowExecutor implements Runnable {
   }
 
   private boolean isNextActivationImmediately(StateExecutionImpl execution) {
-    return execution.getNextActivation() != null && !execution.getNextActivation().isAfterNow();
+    return execution.getNextActivation() != null && execution.getNextActivation().compareTo(ZonedDateTime.now()) <= 0;
   }
 
   private void processState(WorkflowInstance instance,

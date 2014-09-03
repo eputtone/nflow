@@ -1,7 +1,6 @@
 package com.nitorcreations.nflow.rest.v1;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-import static org.joda.time.DateTime.now;
 import static org.springframework.util.StringUtils.isEmpty;
 
 import java.net.URI;
@@ -21,6 +20,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 import org.springframework.stereotype.Component;
+import org.threeten.bp.ZonedDateTime;
 
 import com.nitorcreations.nflow.engine.service.WorkflowInstanceService;
 import com.nitorcreations.nflow.engine.workflow.instance.QueryWorkflowInstances;
@@ -82,7 +82,7 @@ public class WorkflowInstanceResource {
       builder.setNextActivation(req.nextActivationTime);
     }
     workflowInstances.updateWorkflowInstance(builder.build(), new WorkflowInstanceAction.Builder(instance).setExecutionStart(instance.modified)
-        .setExecutionEnd(now()).build());
+        .setExecutionEnd(ZonedDateTime.now()).build());
   }
 
   @GET

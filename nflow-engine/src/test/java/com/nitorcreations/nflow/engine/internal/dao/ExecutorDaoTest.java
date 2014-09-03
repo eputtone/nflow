@@ -5,8 +5,8 @@ import static org.junit.Assert.assertNotEquals;
 
 import javax.inject.Inject;
 
-import org.joda.time.DateTime;
 import org.junit.Test;
+import org.threeten.bp.ZonedDateTime;
 
 
 public class ExecutorDaoTest extends BaseDaoTest {
@@ -15,9 +15,9 @@ public class ExecutorDaoTest extends BaseDaoTest {
 
   @Test
   public void tickCausesDeadNodeRecoveryPeriodically() {
-    DateTime firstNextUpdate = dao.getMaxWaitUntil();
+    ZonedDateTime firstNextUpdate = dao.getMaxWaitUntil();
     dao.tick();
-    DateTime secondNextUpdate = dao.getMaxWaitUntil();
+    ZonedDateTime secondNextUpdate = dao.getMaxWaitUntil();
     assertNotEquals(firstNextUpdate, secondNextUpdate);
     dao.tick();
     assertEquals(secondNextUpdate, dao.getMaxWaitUntil());

@@ -4,9 +4,9 @@ import static java.lang.Boolean.FALSE;
 
 import java.util.LinkedHashMap;
 
-import org.joda.time.DateTime;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.threeten.bp.ZonedDateTime;
 
 import com.nitorcreations.nflow.engine.workflow.instance.WorkflowInstance;
 
@@ -19,7 +19,7 @@ public abstract class BaseNflowTest {
       .setType("dummy")
       .setState("CreateLoan")
       .setStateText(null)
-      .setNextActivation(new DateTime())
+      .setNextActivation(ZonedDateTime.now())
       .setProcessing(FALSE)
       .setRetries(0)
       .setOwner("flowInstance1")

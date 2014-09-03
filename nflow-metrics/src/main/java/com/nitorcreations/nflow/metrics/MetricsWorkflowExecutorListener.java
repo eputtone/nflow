@@ -47,7 +47,7 @@ public class MetricsWorkflowExecutorListener implements
 
   private void meterStartupDelay(ListenerContext context) {
     if(context.instance.nextActivation != null) {
-      long delay = DateTime.now().getMillis() - context.instance.nextActivation.getMillis();
+      long delay = DateTime.now().getMillis() - context.instance.nextActivation.toInstant().toEpochMilli();
       metricRegistry.histogram(groupNameMetricKey("startup-delay")).update(delay);
     }
   }

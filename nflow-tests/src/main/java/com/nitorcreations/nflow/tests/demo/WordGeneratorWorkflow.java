@@ -3,9 +3,9 @@ package com.nitorcreations.nflow.tests.demo;
 import java.util.Locale;
 import java.util.Random;
 
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.threeten.bp.ZonedDateTime;
 
 import com.nitorcreations.nflow.engine.workflow.definition.StateExecution;
 import com.nitorcreations.nflow.engine.workflow.definition.WorkflowDefinition;
@@ -105,7 +105,7 @@ public class WordGeneratorWorkflow extends
     String word = execution.getVariable("word", "");
     execution.setVariable("word", word + state);
     execution.setNextState(newState);
-    execution.setNextActivation(DateTime.now());
+    execution.setNextActivation(ZonedDateTime.now());
   }
 
   public void a(StateExecution execution) {
