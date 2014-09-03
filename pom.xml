@@ -477,6 +477,12 @@
         <scope>runtime</scope>
       </dependency>
       <dependency>
+      	<!-- java8 time api backport -->
+        <groupId>org.threeten</groupId>
+        <artifactId>threetenbp</artifactId>
+        <version>1.0</version>
+      </dependency>
+      <dependency>
         <groupId>joda-time</groupId>
         <artifactId>joda-time</artifactId>
         <version>${jodatime.version}</version>

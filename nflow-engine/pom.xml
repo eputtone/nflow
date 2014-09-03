@@ -32,6 +32,11 @@
       <artifactId>spring-test</artifactId>
     </dependency>
     <dependency>
+      <!-- java8 time api backport -->
+      <groupId>org.threeten</groupId>
+      <artifactId>threetenbp</artifactId>
+    </dependency>
+    <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
     </dependency>
