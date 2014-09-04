@@ -44,14 +44,10 @@ public class WorkflowDefinitionService {
   }
 
   public WorkflowDefinition<?> getWorkflowDefinition(String type) {
-    logger.info("workflowws {}", workflowDefitions);
-
     return workflowDefitions.get(type);
   }
 
   public List<WorkflowDefinition<? extends WorkflowState>> getWorkflowDefinitions() {
-    logger.info("workflowws {}", workflowDefitions);
-
     return new ArrayList<>(workflowDefitions.values());
   }
 
