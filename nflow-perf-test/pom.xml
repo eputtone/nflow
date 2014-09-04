@@ -6,28 +6,12 @@
     <artifactId>nflow-root</artifactId>
     <version>0.3.2-SNAPSHOT</version>
   </parent>
-  <artifactId>nflow-tests</artifactId>
-  <name>nflow-tests</name>
+  <artifactId>nflow-perf-tests</artifactId>
+  <name>nflow-perf-tests</name>
   <dependencies>
     <dependency>
       <groupId>com.nitorcreations</groupId>
-      <artifactId>nflow-jetty</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.nitorcreations</groupId>
-      <artifactId>nflow-metrics</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-rs-client</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.datatype</groupId>
-      <artifactId>jackson-datatype-joda</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.google.code.findbugs</groupId>
-      <artifactId>annotations</artifactId>
+      <artifactId>nflow-tests</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
