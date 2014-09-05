@@ -14,6 +14,11 @@
       <artifactId>nflow-tests</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.nitorcreations</groupId>
+      <artifactId>nflow-tests</artifactId>
+      <classifier>tests</classifier>
+    </dependency>
+    <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
       <scope>test</scope>

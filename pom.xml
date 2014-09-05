@@ -317,6 +317,12 @@
       </dependency>
       <dependency>
         <groupId>com.nitorcreations</groupId>
+        <artifactId>nflow-tests</artifactId>
+        <version>${project.version}</version>
+        <classifier>tests</classifier>
+      </dependency>
+      <dependency>
+        <groupId>com.nitorcreations</groupId>
         <artifactId>core-utils</artifactId>
         <version>${core-utils.version}</version>
       </dependency>
