@@ -1,14 +1,19 @@
 package com.nitorcreations.nflow.performance.workflow;
 
+import static com.nitorcreations.nflow.engine.workflow.definition.NextAction.moveToState;
+import static com.nitorcreations.nflow.engine.workflow.definition.NextAction.moveToStateAfter;
+import static com.nitorcreations.nflow.performance.workflow.QuickWorkflow.QuickState.end;
+import static com.nitorcreations.nflow.performance.workflow.QuickWorkflow.QuickState.quickState;
+import static com.nitorcreations.nflow.performance.workflow.QuickWorkflow.QuickState.retryTwiceState;
+import static com.nitorcreations.nflow.performance.workflow.QuickWorkflow.QuickState.scheduleState;
+import static com.nitorcreations.nflow.performance.workflow.QuickWorkflow.QuickState.slowState;
 import static org.joda.time.DateTime.now;
 
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.nitorcreations.nflow.engine.workflow.definition.Mutable;
+import com.nitorcreations.nflow.engine.workflow.definition.NextAction;
 import com.nitorcreations.nflow.engine.workflow.definition.StateExecution;
-import com.nitorcreations.nflow.engine.workflow.definition.StateVar;
 import com.nitorcreations.nflow.engine.workflow.definition.WorkflowDefinition;
 import com.nitorcreations.nflow.engine.workflow.definition.WorkflowSettings;
 import com.nitorcreations.nflow.engine.workflow.definition.WorkflowState;
@@ -23,7 +28,7 @@ public class QuickWorkflow extends WorkflowDefinition<QuickWorkflow.QuickState>{
 	public static enum QuickState implements WorkflowState {
 		start(WorkflowStateType.start, "Start"),
 		quickState("This executes fast then goes to retryTwice"),
-		retryTwiceState("Retries once and goes then goes to scheduleState"),
+		retryTwiceState("Retries twice and goes then goes to scheduleState"),
 		scheduleState("Goes to slowState, in 3 sec"),
 		slowState("This executes bit slower. Goes to end"),
 		end(WorkflowStateType.end, "End"),
@@ -65,50 +70,47 @@ public class QuickWorkflow extends WorkflowDefinition<QuickWorkflow.QuickState>{
 		});
 	}
 	
-	public void start(StateExecution execution) {
+	public NextAction start(StateExecution execution) {
 		// nothing here
 		execution.setVariable(key, 0);
-		execution.setNextState(QuickState.quickState, "Time for quickness", now());
+		return moveToState(quickState, "Time for quickness");
 	}
-	public void quickState(StateExecution execution) {
+	public NextAction quickState(StateExecution execution) {
 		try {
 			Thread.sleep(10);
 		} catch (InterruptedException e) {
 			// ignore
 		}
-		execution.setNextState(QuickState.retryTwiceState, "Go do some retries", now());
+		return moveToState(retryTwiceState, "Go do some retries");
 	}
-	public void retryTwiceState(StateExecution execution) {
-		//"Retries once and goes then goes to scheduleState"),
+	public NextAction retryTwiceState(StateExecution execution) {
+		// Retries once and goes then goes to scheduleState
 		Integer retryCount = execution.getVariable(key, Integer.class);
 		retryCount ++;
 		execution.setVariable(key, retryCount);
 		if(retryCount > 2) {
 			logger.info("Retry count {}. Go to next state", retryCount);
-			execution.setNextState(QuickState.scheduleState, "Schedule some action", now());
-			return;
+			return moveToState(scheduleState, "Schedule some action");
+			
 		}
 		throw new RuntimeException("Retry count " + retryCount + ". Retrying");
 	}
 	
-	public void scheduleState(StateExecution execution) {
-		execution.setNextState(QuickState.slowState, "Schedule some action", now().plusSeconds(3));
+	public NextAction scheduleState(StateExecution execution) {
+		return moveToStateAfter(slowState, now().plusSeconds(3), "Schedule some action");
 	}
 
-	public void slowState(StateExecution execution) {
+	public NextAction slowState(StateExecution execution) {
 		try {
 			Thread.sleep(500);
 		} catch (InterruptedException e) {
 			// ignore
 		}
-		execution.setNextState(QuickState.end, "Goto end", now());
+		return NextAction.stopInState(end, "Goto end");
 	}
 	
-	public void end(StateExecution execution) {
-		logger.info("end reached");
-	}
-	
-	public void error(StateExecution execution) {
-		
+	public NextAction error(StateExecution execution) {
+		logger.error("should not happen");
+		return null;
 	}
 }
