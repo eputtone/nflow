@@ -2,11 +2,6 @@ package com.nitorcreations.nflow.performance.workflow;
 
 import static com.nitorcreations.nflow.engine.workflow.definition.NextAction.moveToState;
 import static com.nitorcreations.nflow.engine.workflow.definition.NextAction.moveToStateAfter;
-import static com.nitorcreations.nflow.performance.workflow.QuickWorkflow.QuickState.end;
-import static com.nitorcreations.nflow.performance.workflow.QuickWorkflow.QuickState.quickState;
-import static com.nitorcreations.nflow.performance.workflow.QuickWorkflow.QuickState.retryTwiceState;
-import static com.nitorcreations.nflow.performance.workflow.QuickWorkflow.QuickState.scheduleState;
-import static com.nitorcreations.nflow.performance.workflow.QuickWorkflow.QuickState.slowState;
 import static org.joda.time.DateTime.now;
 
 import org.slf4j.Logger;
@@ -35,7 +30,7 @@ public class QuickWorkflow extends WorkflowDefinition<QuickWorkflow.QuickState>{
 		error("Error. Should not be used.");
 		private final WorkflowStateType type;
 		private final String description;
-		
+
 		private QuickState(String description) {
 			this(WorkflowStateType.normal, description);
 		}
@@ -44,7 +39,7 @@ public class QuickWorkflow extends WorkflowDefinition<QuickWorkflow.QuickState>{
 			this.type = type;
 			this.description = description;
 		}
-		
+
 		@Override
 		public WorkflowStateType getType() {
 			return type;
@@ -59,8 +54,8 @@ public class QuickWorkflow extends WorkflowDefinition<QuickWorkflow.QuickState>{
 		public String getDescription() {
 			return description;
 		}
-	}	
-	
+	}
+
 	public QuickWorkflow() {
 		super(QuickWorkflow.class.getSimpleName(), QuickState.start, QuickState.error, new WorkflowSettings(null) {
 			@Override
@@ -69,11 +64,11 @@ public class QuickWorkflow extends WorkflowDefinition<QuickWorkflow.QuickState>{
 			}
 		});
 	}
-	
+
 	public NextAction start(StateExecution execution) {
 		// nothing here
 		execution.setVariable(key, 0);
-		return moveToState(quickState, "Time for quickness");
+		return moveToState(QuickState.quickState, "Time for quickness");
 	}
 	public NextAction quickState(StateExecution execution) {
 		try {
@@ -81,7 +76,7 @@ public class QuickWorkflow extends WorkflowDefinition<QuickWorkflow.QuickState>{
 		} catch (InterruptedException e) {
 			// ignore
 		}
-		return moveToState(retryTwiceState, "Go do some retries");
+		return moveToState(QuickState.retryTwiceState, "Go do some retries");
 	}
 	public NextAction retryTwiceState(StateExecution execution) {
 		// Retries once and goes then goes to scheduleState
@@ -90,14 +85,14 @@ public class QuickWorkflow extends WorkflowDefinition<QuickWorkflow.QuickState>{
 		execution.setVariable(key, retryCount);
 		if(retryCount > 2) {
 			logger.info("Retry count {}. Go to next state", retryCount);
-			return moveToState(scheduleState, "Schedule some action");
-			
+			return moveToState(QuickState.scheduleState, "Schedule some action");
+
 		}
 		throw new RuntimeException("Retry count " + retryCount + ". Retrying");
 	}
-	
+
 	public NextAction scheduleState(StateExecution execution) {
-		return moveToStateAfter(slowState, now().plusSeconds(3), "Schedule some action");
+		return moveToStateAfter(QuickState.slowState, now().plusSeconds(3), "Schedule some action");
 	}
 
 	public NextAction slowState(StateExecution execution) {
@@ -106,9 +101,9 @@ public class QuickWorkflow extends WorkflowDefinition<QuickWorkflow.QuickState>{
 		} catch (InterruptedException e) {
 			// ignore
 		}
-		return NextAction.stopInState(end, "Goto end");
+		return NextAction.stopInState(QuickState.end, "Goto end");
 	}
-	
+
 	public NextAction error(StateExecution execution) {
 		logger.error("should not happen");
 		return null;
