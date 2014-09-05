@@ -1,5 +1,8 @@
 package com.nitorcreations.nflow.performance.client;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -9,29 +12,49 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.nitorcreations.nflow.performance.workflow.QuickWorkflow;
+import com.nitorcreations.nflow.performance.workflow.QuickWorkflow.QuickState;
+import com.nitorcreations.nflow.rest.v1.msg.CreateWorkflowInstanceResponse;
+import com.nitorcreations.nflow.rest.v1.msg.ListWorkflowInstanceResponse;
 
 @Named
 public class LoadGenerator {
   private static final Logger logger = LoggerFactory.getLogger(LoadGenerator.class);
-  private final StopWatch stopWatch = new StopWatch();
 
   @Inject
   private Client client;
 
-  private void generateSomeLoad(int loadCount) {
+  private List<Integer> generateSomeLoad(int loadCount) {
+    final StopWatch stopWatch = new StopWatch();
     stopWatch.start();
+    List<Integer> instanceIds = new LinkedList<>();
     for (int i = 0; i < loadCount; i++) {
-      client.createWorkflow(new QuickWorkflow().getType());
+      CreateWorkflowInstanceResponse resp = client.createWorkflow(new QuickWorkflow().getType());
+      instanceIds.add(resp.id);
     }
     logger.info("Generating {} items took {} msec", loadCount, stopWatch.getTime());
+    return instanceIds;
   }
 
-  public static void main(String[] args) {
+  private void checkFinished(List<Integer> instanceIds) {
+    int endStateCount = 0;
+    for (Integer instanceId : instanceIds) {
+      ListWorkflowInstanceResponse resp = client.getWorkflowInstance(instanceId, false);
+      if(resp != null && resp.state.equals(QuickState.end.name())) {
+        endStateCount ++;
+      }
+    }
+    logger.info("Found {} finished", endStateCount);
+
+  }
+
+  public static void main(String[] args) throws Exception {
     logger.info("Starting");
 
     try (AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(LoadGeneratorConfiguration.class)) {
       LoadGenerator loadGenerator = ctx.getBean(LoadGenerator.class);
-      loadGenerator.generateSomeLoad(20);
+      List<Integer> instanceIds = loadGenerator.generateSomeLoad(20);
+      Thread.sleep(30000);
+      loadGenerator.checkFinished(instanceIds);
     }
     logger.info("The end");
   }

@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nitorcreations.nflow.engine.workflow.definition.WorkflowDefinition;
 import com.nitorcreations.nflow.rest.v1.msg.CreateWorkflowInstanceRequest;
 import com.nitorcreations.nflow.rest.v1.msg.CreateWorkflowInstanceResponse;
+import com.nitorcreations.nflow.rest.v1.msg.ListWorkflowInstanceResponse;
 import com.nitorcreations.nflow.tests.demo.CreditApplicationWorkflow;
 
 @Named
@@ -28,12 +29,24 @@ public class Client {
   }
 
   public CreateWorkflowInstanceResponse createWorkflow(String workflowType) {
-    CreateWorkflowInstanceRequest req = new CreateWorkflowInstanceRequest();
-    req.type = workflowType;
-    req.businessKey = UUID.randomUUID().toString();
-    req.requestData = (new ObjectMapper()).valueToTree(
+    CreateWorkflowInstanceRequest request = new CreateWorkflowInstanceRequest();
+    request.type = workflowType;
+    request.businessKey = UUID.randomUUID().toString();
+    request.requestData = (new ObjectMapper()).valueToTree(
             new CreditApplicationWorkflow.CreditApplication("CUST123", new BigDecimal(100l)));
-    req.externalId = UUID.randomUUID().toString();
-    return fromClient(workflowInstanceResource, true).put(req, CreateWorkflowInstanceResponse.class);
+    request.externalId = UUID.randomUUID().toString();
+    return makeInstanceRequest(request, CreateWorkflowInstanceResponse.class);
+  }
+
+  public ListWorkflowInstanceResponse getWorkflowInstance(int instanceId, boolean fetchActions) {
+    WebClient restReq = fromClient(workflowInstanceResource, true).path(Integer.toString(instanceId));
+    if(fetchActions) {
+      return restReq.query("include", "actions").get(ListWorkflowInstanceResponse.class);
+    }
+    return restReq.get(ListWorkflowInstanceResponse.class);
+  }
+
+  private <T> T makeInstanceRequest(Object request, Class<T> responseClass) {
+    return fromClient(workflowInstanceResource, true).put(request, responseClass);
   }
 }
