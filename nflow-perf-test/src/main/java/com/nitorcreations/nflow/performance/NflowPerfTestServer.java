@@ -23,14 +23,14 @@ public class NflowPerfTestServer {
 	}
 
 	public static void main(String[] args) throws Exception {
-		if(args.length < 2) {
+		if(args.length < 1) {
 			System.out.println("USAGE:");
-			System.out.println("NflowPerfTestServer port some/path/node1.properties");
+			System.out.println("NflowPerfTestServer some/path/node1.properties");
 			System.exit(1);
 		}
-		int port = Integer.parseInt(args[0]);
-		String propsFile = args[1];	
+		String propsFile = args[0];	
 		Map<String, Object> props = loadProps(propsFile);
+		int port = Integer.parseInt((String)props.get("port"));
 		new NflowPerfTestServer(port, props).start();
 	}
 	
