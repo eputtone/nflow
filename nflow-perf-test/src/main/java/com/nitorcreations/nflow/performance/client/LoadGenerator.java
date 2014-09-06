@@ -52,8 +52,8 @@ public class LoadGenerator {
 
     try (AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(LoadGeneratorConfiguration.class)) {
       LoadGenerator loadGenerator = ctx.getBean(LoadGenerator.class);
-      List<Integer> instanceIds = loadGenerator.generateSomeLoad(20);
-      Thread.sleep(30000);
+      List<Integer> instanceIds = loadGenerator.generateSomeLoad(2000);
+      Thread.sleep(300);
       loadGenerator.checkFinished(instanceIds);
     }
     logger.info("The end");

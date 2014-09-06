@@ -21,6 +21,10 @@
       <artifactId>nflow-tests</artifactId>
       <classifier>tests</classifier>
     </dependency>
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+    </dependency>
    	<dependency>
 		<groupId>com.codahale.metrics</groupId>
 		<artifactId>metrics-graphite</artifactId>
@@ -39,11 +43,6 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.postgresql</groupId>
-      <artifactId>postgresql</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
