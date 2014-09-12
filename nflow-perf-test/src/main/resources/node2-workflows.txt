@@ -1,1 +1,1 @@
-com.nitorcreations.nflow.performance.workflow.QuickWorkflow
+com.nitorcreations.nflow.performance.workflow.ConstantWorkflow

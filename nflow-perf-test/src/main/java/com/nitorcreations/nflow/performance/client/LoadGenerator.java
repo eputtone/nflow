@@ -11,8 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import com.nitorcreations.nflow.performance.workflow.QuickWorkflow;
-import com.nitorcreations.nflow.performance.workflow.QuickWorkflow.QuickState;
+import com.nitorcreations.nflow.performance.workflow.ConstantWorkflow;
+import com.nitorcreations.nflow.performance.workflow.ConstantWorkflow.QuickState;
 import com.nitorcreations.nflow.rest.v1.msg.CreateWorkflowInstanceResponse;
 import com.nitorcreations.nflow.rest.v1.msg.ListWorkflowInstanceResponse;
 
@@ -28,7 +28,7 @@ public class LoadGenerator {
     stopWatch.start();
     List<Integer> instanceIds = new LinkedList<>();
     for (int i = 0; i < loadCount; i++) {
-      CreateWorkflowInstanceResponse resp = client.createWorkflow(new QuickWorkflow().getType());
+      CreateWorkflowInstanceResponse resp = client.createWorkflow(new ConstantWorkflow().getType());
       instanceIds.add(resp.id);
     }
     logger.info("Generating {} items took {} msec", loadCount, stopWatch.getTime());

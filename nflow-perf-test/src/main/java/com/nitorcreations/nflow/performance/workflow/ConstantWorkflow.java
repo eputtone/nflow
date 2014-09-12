@@ -17,8 +17,8 @@ import com.nitorcreations.nflow.engine.workflow.definition.WorkflowStateType;
 /**
  * Deterministic workflow that executes quickly.
  */
-public class QuickWorkflow extends WorkflowDefinition<QuickWorkflow.QuickState> {
-  private static final Logger logger = LoggerFactory.getLogger(QuickWorkflow.class);
+public class ConstantWorkflow extends WorkflowDefinition<ConstantWorkflow.QuickState> {
+  private static final Logger logger = LoggerFactory.getLogger(ConstantWorkflow.class);
   private final String key = "retries";
 
   public static enum QuickState implements WorkflowState {
@@ -53,8 +53,8 @@ public class QuickWorkflow extends WorkflowDefinition<QuickWorkflow.QuickState> 
     }
   }
 
-  public QuickWorkflow() {
-    super(QuickWorkflow.class.getSimpleName(), QuickState.start, QuickState.error, new WorkflowSettings(null) {
+  public ConstantWorkflow() {
+    super(ConstantWorkflow.class.getSimpleName(), QuickState.start, QuickState.error, new WorkflowSettings(null) {
       @Override
       public int getErrorTransitionDelay() {
         return 5000;
