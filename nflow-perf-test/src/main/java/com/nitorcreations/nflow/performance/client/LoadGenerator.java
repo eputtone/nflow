@@ -11,8 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import com.nitorcreations.nflow.performance.workflow.ConstantWorkflow;
-import com.nitorcreations.nflow.performance.workflow.ConstantWorkflow.QuickState;
+import com.nitorcreations.nflow.performance.workflow.ConstantWorkflow.ConstantState;
+import com.nitorcreations.nflow.performance.workflow.NoDelaysWorkflow;
 import com.nitorcreations.nflow.rest.v1.msg.CreateWorkflowInstanceResponse;
 import com.nitorcreations.nflow.rest.v1.msg.ListWorkflowInstanceResponse;
 
@@ -28,7 +28,7 @@ public class LoadGenerator {
     stopWatch.start();
     List<Integer> instanceIds = new LinkedList<>();
     for (int i = 0; i < loadCount; i++) {
-      CreateWorkflowInstanceResponse resp = client.createWorkflow(new ConstantWorkflow().getType());
+      CreateWorkflowInstanceResponse resp = client.createWorkflow(new NoDelaysWorkflow().getType());
       instanceIds.add(resp.id);
     }
     logger.info("Generating {} items took {} msec", loadCount, stopWatch.getTime());
@@ -39,7 +39,7 @@ public class LoadGenerator {
     int endStateCount = 0;
     for (Integer instanceId : instanceIds) {
       ListWorkflowInstanceResponse resp = client.getWorkflowInstance(instanceId, false);
-      if(resp != null && resp.state.equals(QuickState.end.name())) {
+      if(resp != null && resp.state.equals(ConstantState.end.name())) {
         endStateCount ++;
       }
     }

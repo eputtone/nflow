@@ -17,22 +17,22 @@ import com.nitorcreations.nflow.engine.workflow.definition.WorkflowStateType;
 /**
  * Deterministic workflow that executes quickly.
  */
-public class ConstantWorkflow extends WorkflowDefinition<ConstantWorkflow.QuickState> {
+public class ConstantWorkflow extends WorkflowDefinition<ConstantWorkflow.ConstantState> {
   private static final Logger logger = LoggerFactory.getLogger(ConstantWorkflow.class);
   private final String key = "retries";
 
-  public static enum QuickState implements WorkflowState {
+  public static enum ConstantState implements WorkflowState {
     start(WorkflowStateType.start, "Start"), quickState("This executes fast then goes to retryTwice"), retryTwiceState(
         "Retries twice and goes then goes to scheduleState"), scheduleState("Goes to slowState, in 3 sec"), slowState(
         "This executes bit slower. Goes to end"), end(WorkflowStateType.end, "End"), error("Error. Should not be used.");
     private final WorkflowStateType type;
     private final String description;
 
-    private QuickState(String description) {
+    private ConstantState(String description) {
       this(WorkflowStateType.normal, description);
     }
 
-    private QuickState(WorkflowStateType type, String description) {
+    private ConstantState(WorkflowStateType type, String description) {
       this.type = type;
       this.description = description;
     }
@@ -54,7 +54,7 @@ public class ConstantWorkflow extends WorkflowDefinition<ConstantWorkflow.QuickS
   }
 
   public ConstantWorkflow() {
-    super(ConstantWorkflow.class.getSimpleName(), QuickState.start, QuickState.error, new WorkflowSettings(null) {
+    super(ConstantWorkflow.class.getSimpleName(), ConstantState.start, ConstantState.error, new WorkflowSettings(null) {
       @Override
       public int getErrorTransitionDelay() {
         return 5000;
@@ -65,7 +65,7 @@ public class ConstantWorkflow extends WorkflowDefinition<ConstantWorkflow.QuickS
   public NextAction start(StateExecution execution) {
     // nothing here
     execution.setVariable(key, 0);
-    return moveToState(QuickState.quickState, "Time for quickness");
+    return moveToState(ConstantState.quickState, "Time for quickness");
   }
 
   public NextAction quickState(StateExecution execution) {
@@ -74,7 +74,7 @@ public class ConstantWorkflow extends WorkflowDefinition<ConstantWorkflow.QuickS
     } catch (InterruptedException e) {
       // ignore
     }
-    return moveToState(QuickState.retryTwiceState, "Go do some retries");
+    return moveToState(ConstantState.retryTwiceState, "Go do some retries");
   }
 
   public NextAction retryTwiceState(StateExecution execution) {
@@ -84,14 +84,14 @@ public class ConstantWorkflow extends WorkflowDefinition<ConstantWorkflow.QuickS
     execution.setVariable(key, retryCount);
     if (retryCount > 2) {
       logger.info("Retry count {}. Go to next state", retryCount);
-      return moveToState(QuickState.scheduleState, "Schedule some action");
+      return moveToState(ConstantState.scheduleState, "Schedule some action");
 
     }
     throw new RuntimeException("Retry count " + retryCount + ". Retrying");
   }
 
   public NextAction scheduleState(StateExecution execution) {
-    return moveToStateAfter(QuickState.slowState, now().plusSeconds(3), "Schedule some action");
+    return moveToStateAfter(ConstantState.slowState, now().plusSeconds(3), "Schedule some action");
   }
 
   public NextAction slowState(StateExecution execution) {
@@ -100,7 +100,7 @@ public class ConstantWorkflow extends WorkflowDefinition<ConstantWorkflow.QuickS
     } catch (InterruptedException e) {
       // ignore
     }
-    return NextAction.stopInState(QuickState.end, "Goto end");
+    return NextAction.stopInState(ConstantState.end, "Goto end");
   }
 
   public NextAction error(StateExecution execution) {
