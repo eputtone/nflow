@@ -17,95 +17,94 @@ import com.nitorcreations.nflow.engine.workflow.definition.WorkflowStateType;
 /**
  * Deterministic workflow that executes quickly.
  */
-public class QuickWorkflow extends WorkflowDefinition<QuickWorkflow.QuickState>{
-	private static final Logger logger = LoggerFactory.getLogger(QuickWorkflow.class);
-	private final String key = "retries";
-	public static enum QuickState implements WorkflowState {
-		start(WorkflowStateType.start, "Start"),
-		quickState("This executes fast then goes to retryTwice"),
-		retryTwiceState("Retries twice and goes then goes to scheduleState"),
-		scheduleState("Goes to slowState, in 3 sec"),
-		slowState("This executes bit slower. Goes to end"),
-		end(WorkflowStateType.end, "End"),
-		error("Error. Should not be used.");
-		private final WorkflowStateType type;
-		private final String description;
+public class QuickWorkflow extends WorkflowDefinition<QuickWorkflow.QuickState> {
+  private static final Logger logger = LoggerFactory.getLogger(QuickWorkflow.class);
+  private final String key = "retries";
 
-		private QuickState(String description) {
-			this(WorkflowStateType.normal, description);
-		}
+  public static enum QuickState implements WorkflowState {
+    start(WorkflowStateType.start, "Start"), quickState("This executes fast then goes to retryTwice"), retryTwiceState(
+        "Retries twice and goes then goes to scheduleState"), scheduleState("Goes to slowState, in 3 sec"), slowState(
+        "This executes bit slower. Goes to end"), end(WorkflowStateType.end, "End"), error("Error. Should not be used.");
+    private final WorkflowStateType type;
+    private final String description;
 
-		private QuickState(WorkflowStateType type, String description) {
-			this.type = type;
-			this.description = description;
-		}
+    private QuickState(String description) {
+      this(WorkflowStateType.normal, description);
+    }
 
-		@Override
-		public WorkflowStateType getType() {
-			return type;
-		}
+    private QuickState(WorkflowStateType type, String description) {
+      this.type = type;
+      this.description = description;
+    }
 
-		@Override
-		public String getName() {
-			return name();
-		}
+    @Override
+    public WorkflowStateType getType() {
+      return type;
+    }
 
-		@Override
-		public String getDescription() {
-			return description;
-		}
-	}
+    @Override
+    public String getName() {
+      return name();
+    }
 
-	public QuickWorkflow() {
-		super(QuickWorkflow.class.getSimpleName(), QuickState.start, QuickState.error, new WorkflowSettings(null) {
-			@Override
-			public int getErrorTransitionDelay() {
-				return 5000;
-			}
-		});
-	}
+    @Override
+    public String getDescription() {
+      return description;
+    }
+  }
 
-	public NextAction start(StateExecution execution) {
-		// nothing here
-		execution.setVariable(key, 0);
-		return moveToState(QuickState.quickState, "Time for quickness");
-	}
-	public NextAction quickState(StateExecution execution) {
-		try {
-			Thread.sleep(10);
-		} catch (InterruptedException e) {
-			// ignore
-		}
-		return moveToState(QuickState.retryTwiceState, "Go do some retries");
-	}
-	public NextAction retryTwiceState(StateExecution execution) {
-		// Retries once and goes then goes to scheduleState
-		Integer retryCount = execution.getVariable(key, Integer.class);
-		retryCount ++;
-		execution.setVariable(key, retryCount);
-		if(retryCount > 2) {
-			logger.info("Retry count {}. Go to next state", retryCount);
-			return moveToState(QuickState.scheduleState, "Schedule some action");
+  public QuickWorkflow() {
+    super(QuickWorkflow.class.getSimpleName(), QuickState.start, QuickState.error, new WorkflowSettings(null) {
+      @Override
+      public int getErrorTransitionDelay() {
+        return 5000;
+      }
+    });
+  }
 
-		}
-		throw new RuntimeException("Retry count " + retryCount + ". Retrying");
-	}
+  public NextAction start(StateExecution execution) {
+    // nothing here
+    execution.setVariable(key, 0);
+    return moveToState(QuickState.quickState, "Time for quickness");
+  }
 
-	public NextAction scheduleState(StateExecution execution) {
-		return moveToStateAfter(QuickState.slowState, now().plusSeconds(3), "Schedule some action");
-	}
+  public NextAction quickState(StateExecution execution) {
+    try {
+      Thread.sleep(10);
+    } catch (InterruptedException e) {
+      // ignore
+    }
+    return moveToState(QuickState.retryTwiceState, "Go do some retries");
+  }
 
-	public NextAction slowState(StateExecution execution) {
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-			// ignore
-		}
-		return NextAction.stopInState(QuickState.end, "Goto end");
-	}
+  public NextAction retryTwiceState(StateExecution execution) {
+    // Retries once and goes then goes to scheduleState
+    Integer retryCount = execution.getVariable(key, Integer.class);
+    retryCount++;
+    execution.setVariable(key, retryCount);
+    if (retryCount > 2) {
+      logger.info("Retry count {}. Go to next state", retryCount);
+      return moveToState(QuickState.scheduleState, "Schedule some action");
 
-	public NextAction error(StateExecution execution) {
-		logger.error("should not happen");
-		return null;
-	}
+    }
+    throw new RuntimeException("Retry count " + retryCount + ". Retrying");
+  }
+
+  public NextAction scheduleState(StateExecution execution) {
+    return moveToStateAfter(QuickState.slowState, now().plusSeconds(3), "Schedule some action");
+  }
+
+  public NextAction slowState(StateExecution execution) {
+    try {
+      Thread.sleep(500);
+    } catch (InterruptedException e) {
+      // ignore
+    }
+    return NextAction.stopInState(QuickState.end, "Goto end");
+  }
+
+  public NextAction error(StateExecution execution) {
+    logger.error("should not happen");
+    return null;
+  }
 }
