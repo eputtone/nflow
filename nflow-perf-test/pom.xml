@@ -11,26 +11,42 @@
 	<name>nflow-perf-tests</name>
 	<properties>
 		<metrics.version>3.0.2</metrics.version>
+		<gatling.version>2.0.0-RC5</gatling.version>
+		<scala.version>2.10.0</scala.version>
 	</properties>
 	<build>
-		<sourceDirectory>src/main/scala</sourceDirectory>
-		<testSourceDirectory>src/test/scala</testSourceDirectory>
+		<sourceDirectory>src/test/java</sourceDirectory>
+		<testSourceDirectory>src/test/java</testSourceDirectory>
 		<plugins>
+			<plugin>
+				<groupId>io.gatling</groupId>
+				<artifactId>gatling-maven-plugin</artifactId>
+				<version>${gatling.version}</version>
+			</plugin>
 			<plugin>
 				<groupId>net.alchim31.maven</groupId>
 				<artifactId>scala-maven-plugin</artifactId>
 				<version>3.2.0</version>
 				<executions>
 					<execution>
+						<id>scala-compile-first</id>
+						<phase>process-resources</phase>
 						<goals>
+							<goal>add-source</goal>
 							<goal>compile</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>scala-test-compile</id>
+						<phase>process-test-resources</phase>
+						<goals>
 							<goal>testCompile</goal>
 						</goals>
 					</execution>
 				</executions>
 				<configuration>
 					<configuration>
-						<scalaVersion>2.10.0</scalaVersion>
+						<scalaVersion>${scala.version}</scalaVersion>
 					</configuration>
 				</configuration>
 			</plugin>
@@ -64,7 +80,7 @@
 		<dependency>
 			<groupId>io.gatling.highcharts</groupId>
 			<artifactId>gatling-charts-highcharts</artifactId>
-			<version>2.0.0-RC5</version>
+			<version>${gatling.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hamcrest</groupId>

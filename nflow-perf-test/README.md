@@ -1,3 +1,13 @@
+gatling usage
+===============
+
+
+mvn gatling:execute -Dgatling.simulationClass=com.nitorcreations.nflow.perf.BasicSimulation
+
+
+
+Test plan
+=========
 - two executors
 -- nflow jettys
 
