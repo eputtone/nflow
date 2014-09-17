@@ -24,7 +24,7 @@ public abstract class DatabaseConfiguration {
   public DataSource datasource(Environment env) {
     String url = property(env, "url");
     logger.info("Database connection to {} using {}", dbType, url);
-    logger.info("d={} url={} user={} pass={} max_p={}",property(env, "driver"), url, property(env, "user"), property(env, "password"), property(env, "max_pool_size", Integer.class));
+    logger.info("d={} url={} user={} max_p={}",property(env, "driver"), url, property(env, "user"), property(env, "max_pool_size", Integer.class));
     HikariConfig config = new HikariConfig();
     config.setDataSourceClassName(property(env, "driver"));
     config.addDataSourceProperty("url", url);
