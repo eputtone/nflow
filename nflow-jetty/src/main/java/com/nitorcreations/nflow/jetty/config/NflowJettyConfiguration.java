@@ -36,9 +36,12 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import com.nitorcreations.nflow.jetty.validation.CustomValidationExceptionMapper;
+import com.nitorcreations.nflow.rest.config.BadRequestExceptionMapper;
 import com.nitorcreations.nflow.rest.config.CorsHeaderContainerResponseFilter;
+import com.nitorcreations.nflow.rest.config.DateTimeParamConverterProvider;
 import com.nitorcreations.nflow.rest.config.NotFoundExceptionMapper;
 import com.nitorcreations.nflow.rest.config.RestConfiguration;
+import com.nitorcreations.nflow.rest.v1.StatisticsResource;
 import com.nitorcreations.nflow.rest.v1.WorkflowDefinitionResource;
 import com.nitorcreations.nflow.rest.v1.WorkflowExecutorResource;
 import com.nitorcreations.nflow.rest.v1.WorkflowInstanceResource;
@@ -62,12 +65,14 @@ public class NflowJettyConfiguration {
   @Bean
   public Server jaxRsServer(WorkflowInstanceResource workflowInstanceResource,
       WorkflowDefinitionResource workflowDefinitionResource, WorkflowExecutorResource workflowExecutorResource,
+      StatisticsResource statisticsResource,
       @Named("nflowRestObjectMapper") ObjectMapper mapper) {
     JAXRSServerFactoryBean factory = RuntimeDelegate.getInstance().createEndpoint(jaxRsApiApplication(), JAXRSServerFactoryBean.class);
     factory.setServiceBeans(Arrays.< Object >asList(
         workflowInstanceResource,
         workflowDefinitionResource,
         workflowExecutorResource,
+        statisticsResource,
         apiListingResourceJson()));
     factory.setAddress('/' + factory.getAddress());
     factory.setProviders( Arrays.asList(
@@ -76,7 +81,9 @@ public class NflowJettyConfiguration {
         resourceListingProvider(),
         apiDeclarationProvider(),
         corsHeadersProvider(),
-        notFoundExceptionMapper()
+        notFoundExceptionMapper(),
+        new BadRequestExceptionMapper(),
+        new DateTimeParamConverterProvider()
         ));
     factory.setFeatures(Arrays.asList(new LoggingFeature()));
     factory.setBus(cxf());
